@@ -1,0 +1,4 @@
+response_id,sentiment,score,summary,keywords
+e28ed920-0bc5-4fa4-848d-5802822bb986,negative,-0.8,The feedback suggests increasing the quantity of food offerings.,"[""food quantity"", ""food offerings"", ""increase food""]"
+b81d7965-8189-481c-8d6f-98d2df33284c,negative,-0.3,The customer suggests increasing the quantity of food offerings.,"[""food quantity"", ""food offerings"", ""increase""]"
+b941a71a-2c4f-44d7-8c5d-3854983d3c08,positive,0.8,The customer is highly satisfied and has no suggestions for improvement.,"[""satisfaction"", ""no suggestions"", ""positive experience"", ""good""]"

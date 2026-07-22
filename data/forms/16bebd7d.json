@@ -1,0 +1,46 @@
+{
+  "form_id": "16bebd7d",
+  "topic": "feedback for faculty",
+  "title": "Faculty Feedback Form",
+  "description": "Provide feedback to help faculty members enhance the learning experience.",
+  "created_at": "2026-07-22T06:11:37.465534+00:00",
+  "questions": [
+    {
+      "id": "q1",
+      "label": "Overall, how would you rate the faculty member's effectiveness in fostering a positive learning environment?",
+      "type": "rating",
+      "required": true
+    },
+    {
+      "id": "q2",
+      "label": "What specific actions or changes could the faculty member implement to enhance your learning experience?",
+      "type": "textarea",
+      "required": true
+    },
+    {
+      "id": "q3",
+      "label": "How clear and understandable were the faculty member's explanations of course material?",
+      "type": "multiple_choice",
+      "required": true,
+      "options": [
+        "Very Clear",
+        "Mostly Clear",
+        "Sometimes Clear",
+        "Rarely Clear",
+        "Not Clear At All"
+      ]
+    },
+    {
+      "id": "q4",
+      "label": "Did you feel the faculty member was generally accessible and supportive when you needed assistance?",
+      "type": "yes_no",
+      "required": true
+    },
+    {
+      "id": "q5",
+      "label": "What were the faculty member's greatest strengths or most positive contributions to your learning?",
+      "type": "textarea",
+      "required": true
+    }
+  ]
+}
