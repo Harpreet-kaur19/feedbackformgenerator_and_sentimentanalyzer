@@ -1,0 +1,20 @@
+{% extends "base_public.html" %}
+
+{% block title %}Admin login{% endblock %}
+
+{% block content %}
+  <div class="form-shell card">
+    <span class="signal-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <h1>Admin login</h1>
+    <p class="subtitle">Enter the admin password to manage forms and view results.</p>
+
+    <form method="POST">
+      <input type="hidden" name="next" value="{{ next }}" />
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autofocus required />
+      </div>
+      <button type="submit" class="btn-primary btn-block">Log in</button>
+    </form>
+  </div>
+{% endblock %}

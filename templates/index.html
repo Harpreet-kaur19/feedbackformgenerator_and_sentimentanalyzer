@@ -1,0 +1,93 @@
+{% extends "base_admin.html" %}
+
+{% block title %}New form — FeedbackAI{% endblock %}
+
+{% block heading %}Generate a feedback form{% endblock %}
+{% block subheading %}
+  <p class="subtitle">Describe what you want feedback on. Gemini designs the questions — you get a shareable link in seconds.</p>
+{% endblock %}
+
+{% block content %}
+  <div class="layout-split">
+    <form action="{{ url_for('generate') }}" method="POST" class="card form-card" id="generate-form">
+      <label for="topic">What is this feedback form about?</label>
+      <textarea
+        id="topic"
+        name="topic"
+        rows="4"
+        placeholder="e.g. Feedback on our new mobile app onboarding flow"
+        required
+      ></textarea>
+
+      <label for="num_questions">Number of AI-generated questions</label>
+      <input
+        type="number"
+        id="num_questions"
+        name="num_questions"
+        min="3"
+        max="10"
+        value="5"
+      />
+
+      <div class="custom-q-section">
+        <div class="custom-q-header">
+          <h2>Add your own questions <span class="tag">optional</span></h2>
+          <p class="hint">Gemini writes the base questions above. Add any of your own here and choose how respondents should answer.</p>
+        </div>
+
+        <div id="custom-questions-list"></div>
+
+        <button type="button" id="add-custom-question" class="btn-secondary btn-add-question">+ Add a question</button>
+      </div>
+
+      <button type="submit" class="btn-primary btn-block">
+        <span class="signal-mark signal-mark-sm on-dark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        Generate form
+      </button>
+    </form>
+
+    <aside class="card info-card">
+      <h2>How it works</h2>
+      <ol class="steps-list">
+        <li><span class="step-index">1</span> Describe your topic, Gemini drafts a mixed set of questions.</li>
+        <li><span class="step-index">2</span> Add any questions of your own, with the answer type you want.</li>
+        <li><span class="step-index">3</span> Preview, publish, and watch responses roll in with sentiment scored automatically.</li>
+      </ol>
+    </aside>
+  </div>
+
+  <template id="custom-question-template">
+    <div class="custom-question-row">
+      <div class="custom-question-main">
+        <input
+          type="text"
+          name="custom_label"
+          class="custom-label-input"
+          placeholder="Your question, e.g. Which feature do you use most?"
+          aria-label="Your question"
+        />
+        <select name="custom_type" class="custom-type-select" aria-label="Answer type">
+          <option value="text">Short answer</option>
+          <option value="textarea">Long answer</option>
+          <option value="rating">Rating (1–5)</option>
+          <option value="multiple_choice">Multiple choice</option>
+          <option value="yes_no">Yes / No</option>
+        </select>
+        <button type="button" class="remove-question-btn" aria-label="Remove this question">&times;</button>
+      </div>
+      <div class="custom-options-wrap" hidden>
+        <input
+          type="text"
+          name="custom_options"
+          class="custom-options-input"
+          placeholder="Options, separated by commas — e.g. Daily, Weekly, Rarely"
+          aria-label="Answer options"
+        />
+      </div>
+    </div>
+  </template>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="{{ url_for('static', filename='js/custom_questions.js') }}"></script>
+{% endblock %}

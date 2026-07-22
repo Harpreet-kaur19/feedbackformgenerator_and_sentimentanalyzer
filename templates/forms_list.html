@@ -1,0 +1,94 @@
+{% extends "base_admin.html" %}
+
+{% block title %}My forms — FeedbackAI{% endblock %}
+
+{% block page_back %}
+  <a class="back-link" href="{{ url_for('index') }}">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back
+  </a>
+{% endblock %}
+
+{% block heading %}My forms{% endblock %}
+{% block subheading %}<p class="subtitle">Every form you've generated. Share a link, watch responses, or retire one for good.</p>{% endblock %}
+{% block page_actions %}
+  <a href="{{ url_for('index') }}" class="btn-primary">+ New form</a>
+{% endblock %}
+
+{% block content %}
+  {% if not forms %}
+    <div class="card empty-state">
+      <p class="subtitle">No forms generated yet.</p>
+      <a href="{{ url_for('index') }}" class="btn-primary">Create your first form</a>
+    </div>
+  {% else %}
+    <div class="table-wrap card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Created</th>
+            <th>Responses</th>
+            <th>Sentiment</th>
+            <th>Shareable link</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for f in forms %}
+            {% set s = stats[f.form_id].sentiment %}
+            {% set scored_total = s.positive + s.neutral + s.negative %}
+            <tr>
+              <td>
+                <strong>{{ f.title }}</strong>
+                <div class="row-links">
+                  <a href="{{ url_for('dashboard', form_id=f.form_id) }}">Dashboard</a>
+                  <span aria-hidden="true">·</span>
+                  <a href="{{ url_for('fill_form', form_id=f.form_id) }}">Open form</a>
+                </div>
+              </td>
+              <td>{{ f.created_at.split('T')[0] if f.created_at else '' }}</td>
+              <td>
+                <a href="{{ url_for('analysis', form_id=f.form_id) }}" class="response-count-link">
+                  <span class="response-count">{{ stats[f.form_id].response_count }}</span>
+                  <span class="response-count-label">{{ 'response' if stats[f.form_id].response_count == 1 else 'responses' }}</span>
+                </a>
+              </td>
+              <td>
+                <a
+                  href="{{ url_for('dashboard', form_id=f.form_id) }}"
+                  class="mini-sentiment"
+                  title="{% if scored_total > 0 %}{{ s.positive }} positive · {{ s.neutral }} neutral · {{ s.negative }} negative{% else %}Not analyzed yet -- open the dashboard{% endif %}"
+                >
+                  {% if scored_total > 0 %}
+                    {% if s.positive > 0 %}<span class="bar-seg bar-positive" style="flex-grow: {{ s.positive }}"></span>{% endif %}
+                    {% if s.neutral > 0 %}<span class="bar-seg bar-neutral" style="flex-grow: {{ s.neutral }}"></span>{% endif %}
+                    {% if s.negative > 0 %}<span class="bar-seg bar-negative" style="flex-grow: {{ s.negative }}"></span>{% endif %}
+                  {% else %}
+                    <span class="bar-seg bar-empty" style="flex-grow: 1"></span>
+                  {% endif %}
+                </a>
+              </td>
+              <td>
+                <div class="link-copy-row">
+                  <code id="link-{{ f.form_id }}">{{ links[f.form_id] }}</code>
+                  <button type="button" class="btn-secondary btn-sm copy-btn" data-copy-target="link-{{ f.form_id }}">Copy</button>
+                </div>
+              </td>
+              <td class="col-delete">
+                <form action="{{ url_for('delete', form_id=f.form_id) }}" method="POST" class="delete-form" data-confirm-title="{{ f.title }}">
+                  <button type="submit" class="btn-danger btn-sm">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="{{ url_for('static', filename='js/copy_link.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/confirm_delete.js') }}"></script>
+{% endblock %}
