@@ -1,0 +1,5 @@
+response_id,sentiment,score,summary,keywords
+3299f2d3-7b58-454e-badd-d2c3bfa41db9,neutral,0.6,The feedback suggests incorporating more practical teaching methods while acknowledging the significant effort put into providing understandable learning materials.,"[""practical teaching"", ""learning materials"", ""student understanding"", ""instructor effort""]"
+07c019b6-5a08-473c-b788-570f8e00e692,neutral,0.0,The feedback provided is unclear and lacks specific content.,[]
+a175652a-efec-41af-a5ab-4ea3358d4c58,positive,0.8,"The learning material provided is excellent, but teaching methods could be simplified for easier understanding.","[""learning material"", ""teaching methods"", ""ease of understanding"", ""quality""]"
+0fd2c983-4565-445c-a7f6-073f5bc2f671,negative,-0.9,The feedback indicates that the subject did not enhance the learning experience or contribute anything.,"[""learning experience"", ""no enhancement"", ""no contribution""]"
