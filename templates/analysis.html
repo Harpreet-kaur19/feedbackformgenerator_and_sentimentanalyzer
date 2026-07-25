@@ -1,0 +1,60 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Response analysis — {{ form.title }}{% endblock %}
+
+{% block page_back %}
+  <a class="back-link" href="{{ url_for('dashboard', form_id=form.form_id) }}">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back to dashboard
+  </a>
+{% endblock %}
+
+{% block heading %}Response analysis{% endblock %}
+{% block subheading %}<p class="subtitle">{{ form.title }}</p>{% endblock %}
+{% block page_actions %}
+  <a href="{{ url_for('fill_form', form_id=form.form_id) }}" class="btn-secondary">Open form</a>
+  <form action="{{ url_for('delete', form_id=form.form_id) }}" method="POST" class="inline-form delete-form" data-confirm-title="{{ form.title }}">
+    <button type="submit" class="btn-danger">Delete form</button>
+  </form>
+{% endblock %}
+
+{% block content %}
+    {% if not records %}
+      <div class="card empty-state">
+        <p class="subtitle">No responses yet.</p>
+      </div>
+    {% else %}
+      <div class="table-wrap card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Submitted</th>
+              <th>Sentiment</th>
+              <th>Score</th>
+              <th>Summary</th>
+              <th>Keywords</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in records %}
+              <tr>
+                <td class="mono">{{ r.submitted_at }}</td>
+                <td>
+                  <span class="tag tag-{{ r.sentiment }}">{{ r.sentiment or 'n/a' }}</span>
+                </td>
+                <td class="mono">{{ r.score }}</td>
+                <td>{{ r.summary }}</td>
+                <td>
+                  {% for kw in (r.keywords or []) %}<span class="chip">{{ kw }}</span>{% endfor %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="{{ url_for('static', filename='js/confirm_delete.js') }}"></script>
+{% endblock %}

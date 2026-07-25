@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}FeedbackAI{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="admin">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="topbar">
+    <a href="{{ url_for('index') }}" class="brand">
+      <span class="signal-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      FeedbackAI
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="{{ url_for('index') }}" class="{{ 'is-active' if request.endpoint == 'index' else '' }}">New form</a>
+      <a href="{{ url_for('forms_list') }}" class="{{ 'is-active' if request.endpoint in ('forms_list','dashboard','analysis') else '' }}">My forms</a>
+      {% if config.ADMIN_PASSWORD and session.get('is_admin') %}
+        <form action="{{ url_for('logout') }}" method="POST" class="logout-form">
+          <button type="submit" class="btn-secondary btn-sm">Log out</button>
+        </form>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="container" id="main">
+    <div class="page-head">
+      {% block page_back %}{% endblock %}
+      <div class="page-head-row">
+        <div>
+          <h1>{% block heading %}{% endblock %}</h1>
+          {% block subheading %}{% endblock %}
+        </div>
+        <div class="page-head-actions">{% block page_actions %}{% endblock %}</div>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-list">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="admin-footer">
+    <span class="signal-mark signal-mark-sm" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    FeedbackAI — forms designed and read by AI, built for you.
+  </footer>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

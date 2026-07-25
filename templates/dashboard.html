@@ -1,0 +1,147 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Dashboard — {{ form.title }}{% endblock %}
+
+{% block page_back %}
+  <a class="back-link" href="{{ url_for('forms_list') }}">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back to my forms
+  </a>
+{% endblock %}
+
+{% block heading %}Dashboard{% endblock %}
+{% block subheading %}<p class="subtitle">{{ form.title }}</p>{% endblock %}
+{% block page_actions %}
+  <a href="{{ url_for('analysis', form_id=form.form_id) }}" class="btn-secondary">View responses</a>
+  <a href="{{ url_for('fill_form', form_id=form.form_id) }}" class="btn-secondary">Open form</a>
+  <form action="{{ url_for('refresh_sentiment', form_id=form.form_id) }}" method="POST" class="inline-form">
+    <button type="submit" class="btn-secondary">Re-analyze sentiment</button>
+  </form>
+  <form action="{{ url_for('delete', form_id=form.form_id) }}" method="POST" class="inline-form delete-form" data-confirm-title="{{ form.title }}">
+    <button type="submit" class="btn-danger">Delete form</button>
+  </form>
+{% endblock %}
+
+{% block content %}
+    <div class="stat-cards">
+      <div class="stat-card">
+        <span class="stat-value">{{ summary.total_responses }}</span>
+        <span class="stat-label">Total responses</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{{ summary.avg_sentiment_score }}</span>
+        <span class="stat-label">Avg. sentiment score (-1 to 1)</span>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="card chart-card">
+        <h2>Sentiment distribution</h2>
+        <canvas id="sentimentChart"></canvas>
+      </div>
+      <div class="card chart-card">
+        <h2>Average rating by question</h2>
+        <canvas id="ratingChart"></canvas>
+      </div>
+      <div class="card chart-card chart-card-wide">
+        <h2>Responses over time</h2>
+        <canvas id="timeChart"></canvas>
+      </div>
+      <div class="card chart-card chart-card-wide">
+        <h2>Top keywords</h2>
+        <canvas id="keywordChart"></canvas>
+      </div>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="{{ url_for('static', filename='js/confirm_delete.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script>
+    const feedbackTheme = getComputedStyle(document.documentElement);
+    const gridColor = feedbackTheme.getPropertyValue('--line').trim();
+    const inkColor = feedbackTheme.getPropertyValue('--ink').trim();
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = inkColor;
+
+    const sentimentData = {{ summary.sentiment_distribution | tojson }};
+    const ratingData = {{ summary.rating_averages | tojson }};
+    const timeData = {{ summary.responses_over_time | tojson }};
+    const keywordData = {{ summary.top_keywords | tojson }};
+
+    new Chart(document.getElementById('sentimentChart'), {
+      type: 'doughnut',
+      data: {
+        labels: sentimentData.labels,
+        datasets: [{
+          data: sentimentData.counts,
+          backgroundColor: ['#3F8F6C', '#D7CFC5', '#AA3B2C'],
+          borderWidth: 0
+        }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
+    });
+
+    new Chart(document.getElementById('ratingChart'), {
+      type: 'bar',
+      data: {
+        labels: ratingData.labels,
+        datasets: [{
+          label: 'Average rating (1-5)',
+          data: ratingData.averages,
+          backgroundColor: '#5B3A52',
+          borderRadius: 4
+        }]
+      },
+      options: {
+        scales: {
+          y: { min: 0, max: 5, grid: { color: gridColor } },
+          x: { grid: { display: false } }
+        },
+        plugins: { legend: { display: false } }
+      }
+    });
+
+    new Chart(document.getElementById('timeChart'), {
+      type: 'line',
+      data: {
+        labels: timeData.labels,
+        datasets: [{
+          label: 'Responses per day',
+          data: timeData.counts,
+          borderColor: '#5B3A52',
+          backgroundColor: 'rgba(91, 58, 82, 0.12)',
+          tension: 0.3,
+          fill: true
+        }]
+      },
+      options: {
+        scales: {
+          y: { grid: { color: gridColor }, beginAtZero: true },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('keywordChart'), {
+      type: 'bar',
+      data: {
+        labels: keywordData.labels,
+        datasets: [{
+          label: 'Mentions',
+          data: keywordData.counts,
+          backgroundColor: '#B98A2E',
+          borderRadius: 4
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        scales: {
+          x: { grid: { color: gridColor }, beginAtZero: true },
+          y: { grid: { display: false } }
+        },
+        plugins: { legend: { display: false } }
+      }
+    });
+  </script>
+{% endblock %}
