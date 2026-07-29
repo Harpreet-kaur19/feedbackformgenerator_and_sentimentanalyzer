@@ -18,7 +18,7 @@ class Config:
 
     # Gemini API
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-    GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+    GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash")
 
     # Storage paths
     DATA_DIR = os.path.join(BASE_DIR, "data")
